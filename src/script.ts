@@ -2,8 +2,9 @@
 
 window.addEventListener("load", app);
 
+let isGameOver = false;
 let guessCount = 0;
-let min = 0;
+let min = 1;
 let max = 100;
 let mid = calculateMid();
 
@@ -46,14 +47,17 @@ function printGuess(guess: number) {
             `
             <li>It must be ${mid}!</li>
             `;
+
+        isGameOver = true;
     }
 
     document.querySelector("#guesses-list")?.insertAdjacentHTML("beforeend", html);
 
     updateGuessCount();
+    checkGameState();
     addEventListeners();
 
-    console.log("min:", min, "max:", max, "mid:", mid);
+    console.log("min:", min, "max:", max, "mid:", mid, "isGameOver:", isGameOver);
 }
 
 function printAnswer(answer: string) {
@@ -77,6 +81,8 @@ function GuessIsTooLow() {
 
 function GuessIsCorrect() {
     printAnswer("that was correct!");
+    isGameOver = true;
+    checkGameState();
 }
 
 function updateGuessCount() {
@@ -86,4 +92,28 @@ function updateGuessCount() {
 
 function calculateMid() {
     return Math.floor((min + max) / 2);
+}
+
+function checkGameState() {
+    console.log(isGameOver);
+    console.log(guessCount);
+
+    if (isGameOver) {
+        let html =
+            /*html*/
+            `<li>It took me <b>${guessCount}</b> guesses - `;
+        if (guessCount <= 3) {
+            html += "Awesome! 😎";
+        } else if (guessCount >= 4 && guessCount <= 6) {
+            html += "Decent! 🙂";
+        } else if (guessCount === 7) {
+            html += "Meh! 😥";
+        }
+
+        html += "</li>";
+
+        document.querySelector("#guesses-list")?.insertAdjacentHTML("beforeend", html);
+    } else {
+        return;
+    }
 }
